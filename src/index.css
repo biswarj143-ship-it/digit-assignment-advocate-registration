@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+:root {
+  --primary-teal: #007A7A;       /* Main buttons, active elements */
+  --primary-teal-hover: #006666; /* Button hover state */
+  --text-main: #212121;         /* Headings, main text */
+  --text-secondary: #757575;     /* Helper text, subtle labels */
+  --bg-main: #EEEEEE;           /* General page background */
+  --bg-card: #FFFFFF;           /* The centered white box */
+  --border-input: #bdbdbd;      /* Input fields and file display */
+  --border-light: #e0e0e0;      /* subtle lines (like header bottom) */
+}

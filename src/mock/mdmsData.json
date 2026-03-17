@@ -1,0 +1,20 @@
+
+{
+  "States": [
+    {"code":"OD","name":"Odisha"},
+    {"code":"DL","name":"Delhi"},
+    {"code":"KR","name":"Karnataka"}
+  ],
+
+
+  "District": [
+    {"code":"CTC","name":"Cuttack"},
+    {"code":"KH","name":"Khordha"},
+    {"code":"JAJ","name":"Jajpur"}
+  ],
+
+  "City": [
+    {"code":"BBSR","name":"Bhubaneswar"},
+    {"code":"JP","name":"Jaypur"}
+  ]
+}

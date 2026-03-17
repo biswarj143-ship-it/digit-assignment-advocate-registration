@@ -1,3 +1,58 @@
+# DIGIT Assignment - Advocate Registration Frontend
+
+## Technology
+React JS
+
+## Features Implemented
+- Advocate Registration Form
+- Aadhar Verification (Dummy)
+- Document Upload
+- Terms & Conditions
+- Registration Success Page
+
+## API Integration
+Mock APIs implemented for:
+- Create Advocate
+- Upload Documents
+- Fetch Master Data
+
+## Master Data
+Mock MDMS data used for dropdown fields.
+
+## Run Project
+npm install
+npm start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
