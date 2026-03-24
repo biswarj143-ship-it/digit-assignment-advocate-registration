@@ -1,8 +1,39 @@
 import React, { useState } from 'react';
+import { submitTerms } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { createAdvocate } from "../services/api";
 
 const AdvocateTerm = () => {
   const [accepted, setAccepted] = useState(false);
   const [file, setFile] = useState(null);
+  const navigate = useNavigate();
+
+// const handleProceed = async () => {
+//   if (!accepted) return;
+
+//   const res = await submitTerms();
+//   console.log("Application ID:", res.applicationId);
+
+//   navigate("/advocate-waiting");
+// };
+
+const handleProceed = async () => {
+  if (!accepted) return;
+
+  const finalData = {
+    ...JSON.parse(localStorage.getItem("finalData")),
+    identityMethod: localStorage.getItem("identityMethod"),
+  };
+
+  const res = await createAdvocate(finalData);
+
+  const appId = res.Advocates[0].id;
+
+  localStorage.setItem("applicationId", appId);
+
+  navigate("/advocate-waiting");
+};
+
    return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -14,7 +45,7 @@ const AdvocateTerm = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/advocate-aadhar-otp")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           
 
@@ -142,6 +173,7 @@ const AdvocateTerm = () => {
         </div>
         <button 
           disabled={!accepted} 
+          onClick={handleProceed}
           style={{
             ...styles.primaryButton, 
             backgroundColor: accepted ? '#007a7a' : '#007a7a',

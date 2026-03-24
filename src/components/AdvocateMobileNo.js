@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import mdmsData from '../mock/mdmsData.json';
+import { useNavigate } from "react-router-dom";
+import { sendOTP } from "../services/api";
 
 const AdvocateMobileNo = () => {
   const [file, setFile] = useState(null);
@@ -8,6 +10,51 @@ const AdvocateMobileNo = () => {
   
   const [role, setRole] = useState("advocate");
   const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState({});
+
+
+
+const validate = () => {
+  let err = {};
+
+  if (!phone) {
+    err.phone = "Mobile number is required";
+  } else if (!/^[6-9]\d{9}$/.test(phone)) {
+    err.phone = "Invalid mobile number";
+  }
+
+  setErrors(err);
+  return Object.keys(err).length === 0;
+};
+  const navigate = useNavigate();
+
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   if (!validate()) return;
+
+//   await sendOTP(phone);
+//   navigate("/otp");
+// };
+
+/////////////////
+const [loading, setLoading] = useState(false);
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  setLoading(true);
+
+  try {
+    await sendOTP(phone);
+    localStorage.setItem("mobile", phone);
+    navigate("/otp");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div style={styles.container}>
@@ -20,7 +67,7 @@ const AdvocateMobileNo = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/about")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           
 
@@ -31,8 +78,8 @@ const AdvocateMobileNo = () => {
          </p>
 
         
-         <form style={styles.form}>
-           <label style={styles.label}>Phone No</label>
+         <form style={styles.form} onSubmit={handleSubmit}>
+           <label style={styles.label}>Mobile No</label>
 
            <div style={styles.phoneInput}>
              <span style={styles.prefix}>+91</span>
@@ -44,7 +91,13 @@ const AdvocateMobileNo = () => {
                style={styles.input}
              />
            </div>
-
+          <div>
+            {errors.phone && (
+              <p style={{ color: "red", fontSize: "12px" }}>
+                {errors.phone}
+              </p>
+            )}
+          </div>
           <button type="submit" style={styles.signInButton}>
                          Continue
            </button>

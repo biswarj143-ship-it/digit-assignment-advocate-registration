@@ -1,6 +1,36 @@
 import React, { useState } from 'react';
 
+import { useEffect } from "react";
+import { checkStatus } from "../services/api";
+import { useNavigate } from "react-router-dom";
+
 const AdvocateWait = () => {
+  const navigate = useNavigate();
+
+// useEffect(() => {
+//   const check = async () => {
+//     const res = await checkStatus();
+
+//     if (res.status === "APPROVED") {
+//       navigate("/advocate-success");
+//     }
+//   };
+
+//   const timer = setTimeout(check, 3000);
+
+//   return () => clearTimeout(timer);
+// }, []);
+useEffect(() => {
+  const interval = setInterval(async () => {
+    const res = await checkStatus();
+
+    if (res.status === "APPROVED") {
+      navigate("/advocate-success");
+    }
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, []);
    return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -12,7 +42,7 @@ const AdvocateWait = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/advocate-term")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           
 

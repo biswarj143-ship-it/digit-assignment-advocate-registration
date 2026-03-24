@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
+import { verifyAadharOTP } from "../services/api";
+import { useNavigate } from "react-router-dom";
+
+
 
 const AdvocateAadharOTP = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(25);
   const inputRefs = useRef([]);
-
   
+ 
+  
+  
+
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
@@ -15,13 +22,13 @@ const AdvocateAadharOTP = () => {
 
   const handleChange = (index, e) => {
     const value = e.target.value;
-    if (isNaN(value)) return; 
+    if (isNaN(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value.substring(value.length - 1);
     setOtp(newOtp);
 
-    
+
     if (value && index < 5) {
       inputRefs.current[index + 1].focus();
     }
@@ -33,6 +40,58 @@ const AdvocateAadharOTP = () => {
     }
   };
 
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  // const handleVerify = async () => {
+  //   const finalOtp = otp.join("");
+
+  //   if (finalOtp.length !== 6) {
+  //     setError("Enter valid OTP");
+  //     return;
+  //   }
+
+  //   try {
+  //     await verifyAadharOTP(finalOtp);
+  //     navigate("/advocate-term");
+  //   } catch (e) {
+  //     setError("Invalid OTP");
+  //   }
+  // };
+const [loading, setLoading] = useState(false);
+const handleVerify = async () => {
+    if (otp.join("").length !== 6) {
+      setError("Please enter a 6-digit OTP");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      await verifyAadharOTP(otp.join(""));
+      navigate("/advocate-term");
+    } catch (err) {
+      setError("Invalid Aadhaar OTP. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+// const handleVerify = async () => {
+//   setLoading(true);
+
+//   try {
+//     await verifyAadharOTP(otp.join(""));
+//     navigate("/advocate-term");
+//   } catch {
+//     setError("Invalid OTP");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -44,7 +103,7 @@ const AdvocateAadharOTP = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/advocate-aadhar-verification")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           <div style={styles.overlay}>
             <div style={styles.modal}>
@@ -69,6 +128,7 @@ const AdvocateAadharOTP = () => {
                   />
                 ))}
               </div>
+              <div>{error && <p style={{ color: "red" }}>{error}</p>}</div>
 
               <div style={styles.footerRow}>
                 <div style={styles.timerText}>
@@ -81,7 +141,7 @@ const AdvocateAadharOTP = () => {
                     Resend OTP
                   </span>
                 </div>
-                <button style={styles.verifyBtn}>Verify</button>
+                <button style={styles.verifyBtn} onClick={handleVerify}>Verify</button>
               </div>
             </div>
           </div>
@@ -91,7 +151,7 @@ const AdvocateAadharOTP = () => {
       </main>
     </div>
   );
-  
+
 };
 
 const styles = {
@@ -174,7 +234,7 @@ const styles = {
     flexDirection: 'column',
     backgroundColor: 'var(--bg-main)',
   },
-   header: {
+  header: {
     backgroundColor: 'var(--bg-card)',
     padding: '12px 48px',
     display: 'flex',
@@ -204,7 +264,7 @@ const styles = {
   },
   contentWidthLimiter: {
     width: '100%',
-    maxWidth: '540px', 
+    maxWidth: '540px',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -221,7 +281,7 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
     marginLeft: '40px',
-    color:'#000'
+    color: '#000'
   },
   verificationCard: {
     backgroundColor: 'var(--bg-card)',

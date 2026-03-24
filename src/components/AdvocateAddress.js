@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import mdmsData from '../mock/mdmsData.json';
+import { saveAddress } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { useMDMS } from "../hooks/useMDMS";
+
 const AdvocateAddress = () => {
 
-  const statesList = mdmsData?.States ;
-  const distList = mdmsData?.District ;
-  const cityList = mdmsData?.City ;
+  // const statesList = mdmsData?.States ;
+  // const distList = mdmsData?.District ;
+  // const cityList = mdmsData?.City ;
   const [formData, setFormData] = useState({
     search: "",
     pincode: "",
@@ -15,10 +19,59 @@ const AdvocateAddress = () => {
     doorNumber: ""
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validate = () => {
+  let err = {};
+
+  if (!formData.pincode) err.pincode = "Pincode required";
+  if (!/^\d{6}$/.test(formData.pincode))
+    err.pincode = "Invalid pincode";
+
+  if (!formData.state) err.state = "State required";
+  if (!formData.district) err.district = "District required";
+  if (!formData.city) err.city = "City required";
+  if (!formData.locality) err.locality = "Locality required";
+
+  setErrors(err);
+  return Object.keys(err).length === 0;
+};
+
+const navigate = useNavigate();
+
+// const handleSubmit = async () => {
+//   if (!validate()) return;
+
+//   await saveAddress(formData);
+
+//   navigate("/advocate-verify-identity");
+// };
+const mdms = useMDMS();
+
+const statesList = mdms?.States || [];
+const distList = mdms?.District || [];
+const cityList = mdms?.City || [];
+
+const handleSubmit = async () => {
+  if (!validate()) return;
+
+  await saveAddress(formData);
+
+  const existing = JSON.parse(localStorage.getItem("registration"));
+
+  const payload = {
+    ...existing,
+    address: formData,
+  };
+
+  localStorage.setItem("finalData", JSON.stringify(payload));
+
+  navigate("/advocate-verify-identity");
+};
 
   return (
     <div style={styles.container}>
@@ -31,7 +84,7 @@ const AdvocateAddress = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/advocate-registration")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           
 
@@ -68,6 +121,7 @@ const AdvocateAddress = () => {
           <div style={styles.inputGroup}>
             <label style={styles.label}>Pincode</label>
             <input type="text" name="pincode" style={styles.input} onChange={handleChange} />
+            <div>{errors.pincode && <p style={{color:'red', fontSize: "12px"}}>{errors.pincode}</p>}</div>
           </div>
 
           <div style={styles.inputGroup}>
@@ -76,6 +130,7 @@ const AdvocateAddress = () => {
               <option value="">Select State</option>
               {statesList.map(s => <option key={s} value={s.code}>{s.name}</option>)}
             </select>
+            <div>{errors.state && <p style={{color:'red', fontSize: "12px"}}>{errors.state}</p>}</div>
           </div>
 
           <div style={styles.inputGroup}>
@@ -84,6 +139,7 @@ const AdvocateAddress = () => {
               <option value="">Select District</option>
               {distList.map(s => <option key={s} value={s.code}>{s.name}</option>)}
             </select>
+            <div>{errors.district && <p style={{color:'red', fontSize: "12px"}}>{errors.district}</p>}</div>
           </div>
 
           <div style={styles.inputGroup}>
@@ -92,20 +148,23 @@ const AdvocateAddress = () => {
               <option value="">Select City</option>
               {cityList.map(s => <option key={s} value={s.code}>{s.name}</option>)}
             </select>
+            <div>{errors.city && <p style={{color:'red', fontSize: "12px"}}>{errors.city}</p>}</div>
           </div>
 
           <div style={styles.inputGroup}>
             <label style={styles.label}>Locality / Street name / Area</label>
             <input type="text" name="locality" style={styles.input} onChange={handleChange} />
+            <div>{errors.locality && <p style={{color:'red', fontSize: "12px"}}>{errors.locality}</p>}</div>
           </div>
 
           <div style={styles.inputGroup}>
             <label style={styles.label}>Door number</label>
             <input type="text" name="doorNumber" style={styles.input} onChange={handleChange} />
+            
           </div>
         </div>
 
-        <button type="button" style={styles.continueButton}>
+        <button type="button" style={styles.continueButton} onClick={handleSubmit}>
           Continue
         </button>
       </div>

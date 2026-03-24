@@ -1,18 +1,20 @@
 import React, { useState, useRef } from "react";
+import { generateAadharOTP } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const AdvocateAadharVerification = () => {
- 
+
   const [parts, setParts] = useState(["", "", ""]);
   const inputRefs = [useRef(), useRef(), useRef()];
 
   const handleChange = (index, e) => {
-    const value = e.target.value.replace(/\D/g, ""); 
+    const value = e.target.value.replace(/\D/g, "");
     if (value.length <= 4) {
       const newParts = [...parts];
       newParts[index] = value;
       setParts(newParts);
 
-      
+
       if (value.length === 4 && index < 2) {
         inputRefs[index + 1].current.focus();
       }
@@ -20,10 +22,28 @@ const AdvocateAadharVerification = () => {
   };
 
   const handleKeyDown = (index, e) => {
-    
+
     if (e.key === "Backspace" && !parts[index] && index > 0) {
       inputRefs[index - 1].current.focus();
     }
+  };
+
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    const aadhaar = parts.join("");
+
+    if (aadhaar.length !== 12) {
+      setError("Enter valid 12 digit Aadhaar");
+      return;
+    }
+
+    setError("");
+
+    await generateAadharOTP(aadhaar);
+
+    navigate("/advocate-aadhar-otp");
   };
 
   return (
@@ -37,49 +57,50 @@ const AdvocateAadharVerification = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/advocate-verify-identity")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
-          
 
-          
-      <div style={styles.card}>
-        <h1 style={styles.title}>Enter your Aadhaar Number</h1>
-        <p style={styles.subtitle}>Please enter your 12 Digit Aadhaar number</p>
 
-        <div style={styles.inputGroup}>
-          {parts.map((part, index) => (
-            <input
-              key={index}
-              ref={inputRefs[index]}
-              type="text"
-              maxLength="4"
-              value={part}
-              onChange={(e) => handleChange(index, e)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              style={styles.input}
-              placeholder="----"
-            />
-          ))}
-        </div>
 
-        <button 
-          type="button" 
-          style={styles.otpButton}
-          onClick={() => console.log("Aadhaar Number:", parts.join(""))}
-        >
-          Get OTP
-        </button>
-      </div>
-    
+          <div style={styles.card}>
+            <h1 style={styles.title}>Enter your Aadhaar Number</h1>
+            <p style={styles.subtitle}>Please enter your 12 Digit Aadhaar number</p>
+
+            <div style={styles.inputGroup}>
+              {parts.map((part, index) => (
+                <input
+                  key={index}
+                  ref={inputRefs[index]}
+                  type="text"
+                  maxLength="4"
+                  value={part}
+                  onChange={(e) => handleChange(index, e)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  style={styles.input}
+                  placeholder="----"
+                />
+              ))}
+            </div>
+            <div>{error && <p style={{ color: "red" }}>{error}</p>}</div>
+
+            <button
+              type="button"
+              style={styles.otpButton}
+              onClick={handleSubmit}
+            >
+              Get OTP
+            </button>
+          </div>
+
         </div>
       </main>
     </div>
   );
-  
+
 };
 
 const styles = {
-  
+
   card: {
     width: "500px",
     background: "#fff",
@@ -117,7 +138,7 @@ const styles = {
   otpButton: {
     width: "100%",
     padding: "16px",
-    background: "#007a7a", 
+    background: "#007a7a",
     color: "#fff",
     border: "none",
     fontWeight: "600",
@@ -126,8 +147,6 @@ const styles = {
     borderRadius: "2px",
     transition: "background 0.3s ease",
   },
-
-  ////////////////HEADER CSS////////
   container: {
     minHeight: '100vh',
     display: 'flex',
@@ -164,7 +183,7 @@ const styles = {
   },
   contentWidthLimiter: {
     width: '100%',
-    maxWidth: '540px', 
+    maxWidth: '540px',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -181,7 +200,7 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
     marginLeft: '40px',
-    color:'#000'
+    color: '#000'
   },
 };
 

@@ -1,0 +1,62 @@
+{
+  "Workflow": {
+    "businessService": "advocate-registration",
+    "businessServiceSla": 432000000, 
+    "states": [
+      {
+        "state": null,
+        "isRootState": true,
+        "actions": [
+          {
+            "action": "SUBMIT",
+            "nextState": "PENDING_FOR_VERIFICATION",
+            "roles": ["CITIZEN", "ADVOCATE"]
+          }
+        ]
+      },
+      {
+        "state": "PENDING_FOR_VERIFICATION",
+        "applicationStatus": "PENDING_FOR_VERIFICATION",
+        "docUploadRequired": true,
+        "actions": [
+          {
+            "action": "APPROVE",
+            "nextState": "APPROVED",
+            "roles": ["REGISTRAR_APPROVER"]
+          },
+          {
+            "action": "REJECT",
+            "nextState": "REJECTED",
+            "roles": ["REGISTRAR_APPROVER"]
+          },
+          {
+            "action": "SENDBACK",
+            "nextState": "PENDING_FOR_EDIT",
+            "roles": ["REGISTRAR_APPROVER"]
+          }
+        ]
+      },
+      {
+        "state": "PENDING_FOR_EDIT",
+        "applicationStatus": "PENDING_FOR_EDIT",
+        "actions": [
+          {
+            "action": "RESUBMIT",
+            "nextState": "PENDING_FOR_VERIFICATION",
+            "roles": ["ADVOCATE"]
+          }
+        ]
+      },
+      {
+        "state": "APPROVED",
+        "applicationStatus": "APPROVED",
+        "isTerminateState": true
+      },
+      {
+        "state": "REJECTED",
+        "applicationStatus": "REJECTED",
+        "isTerminateState": true
+      }
+    ]
+  }
+}

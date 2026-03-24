@@ -1,10 +1,24 @@
 
 import React, { useState, useEffect, useRef } from "react";
-
+import { verifyOTP } from "../services/api";
+import { useNavigate } from "react-router-dom";
 const AdvocateOTP = () => {
+  const navigate = useNavigate();
+  const getOTPValue = () => otp.join("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(25);
   const inputRefs = useRef([]);
+
+  const validateOTP = () => {
+    const otpValue = otp.join("");
+
+    if (otpValue.length !== 6) {
+      alert("Enter complete OTP");
+      return false;
+    }
+
+    return true;
+  };
 
   useEffect(() => {
     if (timer > 0) {
@@ -32,6 +46,24 @@ const AdvocateOTP = () => {
     }
   };
 
+  const [loading, setLoading] = useState(false);
+const [error, setError] = useState("");
+
+// const handleVerify = async () => {
+//   if (otp.join("").length !== 6) return;
+
+//   setLoading(true);
+
+//   try {
+//     await verifyOTP(otp.join(""));
+//     navigate("/verification");
+//   } catch {
+//     setError("Invalid OTP");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -43,12 +75,12 @@ const AdvocateOTP = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/mobile")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           <div style={styles.overlay}>
-            
+
             <div style={styles.modal}>
-             
+
               <div style={styles.header2}>
                 <h2 style={styles.title}>Verify your Mobile Number</h2>
                 <button style={styles.closeBtn}>×</button>
@@ -82,7 +114,38 @@ const AdvocateOTP = () => {
                     Resend OTP
                   </span>
                 </div>
-                <button style={styles.verifyBtn}>Verify</button>
+
+                <button
+                  style={styles.verifyBtn}
+                  onClick={async () => {
+                    if (!validateOTP()) return;
+
+                    try {
+                      await verifyOTP(otp.join(""));
+                      navigate("/verification");
+                    } catch {
+                      alert("Invalid OTP");
+                    }
+                  }}
+
+                >
+                  Verify
+                </button>
+                {/* <button
+  style={styles.verifyBtn}
+  onClick={async () => {
+    if (!validateOTP()) return;
+
+    try {
+      await verifyOTP(otp.join(""));
+      navigate("/verification");
+    } catch {
+      alert("Invalid OTP");
+    }
+  }}
+>
+  Verify
+</button> */}
               </div>
             </div>
           </div>
@@ -92,7 +155,7 @@ const AdvocateOTP = () => {
       </main>
     </div>
   );
-  
+
 };
 
 const styles = {
@@ -175,7 +238,7 @@ const styles = {
     flexDirection: 'column',
     backgroundColor: 'var(--bg-main)',
   },
-   header: {
+  header: {
     backgroundColor: 'var(--bg-card)',
     padding: '12px 48px',
     display: 'flex',
@@ -205,7 +268,7 @@ const styles = {
   },
   contentWidthLimiter: {
     width: '100%',
-    maxWidth: '540px', 
+    maxWidth: '540px',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -222,7 +285,7 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
     marginLeft: '40px',
-    color:'#000'
+    color: '#000'
   },
   verificationCard: {
     backgroundColor: 'var(--bg-card)',

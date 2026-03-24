@@ -1,12 +1,59 @@
 import React, { useState } from 'react';
 import mdmsData from '../mock/mdmsData.json';
+import { useNavigate } from "react-router-dom";
+import { saveAdvocateDetails } from "../services/api";
 
 const AdvocateRegistration = () => {
   const [file, setFile] = useState(null);
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+  firstName: "",
+  middleName: "",
+  lastName: "",
+});
+const [errors, setErrors] = useState({});
+const validate = () => {
+  let err = {};
 
-  const statesList = mdmsData?.States || ['Odisha', 'Delhi', 'Maharashtra'];
+  if (!form.firstName) err.firstName = "First name required";
+  if (!form.lastName) err.lastName = "Last name required";
 
-  return (
+  setErrors(err);
+  return Object.keys(err).length === 0;
+};
+
+const handleChange = (e) => {
+  setForm({ ...form, [e.target.name]: e.target.value });
+};
+
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   if (!validate()) return;
+
+//   await saveAdvocateDetails(form);
+
+//   navigate("/advocate-address");
+// };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  const existing = JSON.parse(localStorage.getItem("verification"));
+
+  const payload = {
+    ...existing,
+    ...form,
+  };
+
+  await saveAdvocateDetails(payload);
+
+  localStorage.setItem("registration", JSON.stringify(payload));
+
+  navigate("/advocate-address");
+}; 
+return (
     <div style={styles.container}>
       <header style={styles.header}>
         <img src="/govt-logo.png" alt="Emblem" style={styles.emblem} />
@@ -17,7 +64,7 @@ const AdvocateRegistration = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/verification")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           
 
@@ -27,22 +74,22 @@ const AdvocateRegistration = () => {
               To ensure seamless verification and mantain complaince with official record
             </p>
 
-            <form style={styles.form}>
+            <form style={styles.form} onSubmit={handleSubmit}>
               <div style={styles.inputGroup}>
                 <label style={styles.label}>First Name</label>
-                <input type="text" placeholder="Enter first name" style={styles.inputStyle} />
+                <input type="text" placeholder="Enter first name" style={styles.inputStyle} name="firstName" onChange={handleChange}/>
               </div>
-
+<div>{errors.firstName && <p style={{color:'red', fontSize: "12px"}}>{errors.firstName}</p>}</div>
               <div style={styles.inputGroup}>
                 <label style={styles.label}>Middle Name</label>
-                <input type="text" placeholder="Enter middle name" style={styles.inputStyle} />
+                <input type="text" placeholder="Enter middle name" style={styles.inputStyle} name="middleName" onChange={handleChange}/>
               </div>
 
               <div style={styles.inputGroup}>
                 <label style={styles.label}>Last Name</label>
-                <input type="text" placeholder="Enter last name" style={styles.inputStyle} />
+                <input type="text" placeholder="Enter last name" style={styles.inputStyle} name="lastName" onChange={handleChange}/>
               </div>
-
+<div>{errors.lastName && <p style={{color:'red', fontSize: "12px"}}>{errors.lastName}</p>}</div>
               <button type="submit" style={styles.continueButton}>Continue</button>
             </form>
           </div>

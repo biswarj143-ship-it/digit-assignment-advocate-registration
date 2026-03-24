@@ -17,9 +17,6 @@ import AdvocateAddress from './components/AdvocateAddress';
 import AdvocateSuccess from './components/AdvocateSuccess';
 import AdvocateWait from './components/AdvocateWait';
 import AdvocateTerm from './components/AdvocateTerm';
-// import Home from "./pages/Home";
-// import AdvocateRegistration from "./pages/AdvocateRegistration";
-// import SuccessPage from "./pages/SuccessPage";
 
 
 function App() {
@@ -30,29 +27,29 @@ function App() {
 
         {/* <Route path="/" element={<Home />} /> */}
 
-        <Route
-          path="/advocate-login"
-          element={<AdvocateSignIn />}
+        <Route 
+          path="/" 
+          element={<AdvocateSignIn />} 
         />
-
-        <Route
-          path="/advocate-about"
-          element={<AdvocateAbout />}
+        <Route 
+          path="/about" 
+          element={<AdvocateAbout />} 
         />
-
-        <Route
-          path="/advocate-mobileNo"
-          element={<AdvocateMobileNo />}
+        <Route 
+          path="/mobile" 
+          element={<AdvocateMobileNo />} 
         />
-
-        <Route
-          path="/advocate-mobile-otp"
-          element={<AdvocateOTP />}
+        <Route 
+          path="/otp" 
+          element={<AdvocateOTP />} 
         />
-
-        <Route
-          path="/advocate-verification"
-          element={<AdvocateVarification />}
+        <Route 
+          path="/verification" 
+          element={<AdvocateVarification />} 
+        />
+        <Route 
+          path="/registration" 
+          element={<AdvocateRegistration />} 
         />
 
         <Route
@@ -103,14 +100,6 @@ function App() {
           element={<AdvocateSuccess />}
         />
 
-       
-
-       
-
-        {/* <Route
-          path="/success"
-          element={<SuccessPage />}
-        /> */}
       
       </Routes>
     </Router>

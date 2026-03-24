@@ -1,13 +1,79 @@
 
 import React, { useState } from 'react';
 import mdmsData from '../mock/mdmsData.json';
+import { useNavigate } from "react-router-dom";
+import { uploadDocument } from "../services/api";
+import { useMDMS } from "../hooks/useMDMS";
 
 const AdvocateVerification = () => {
   const [file, setFile] = useState(null);
+  const navigate = useNavigate();
+  // const statesList = mdmsData?.States;
+  const [form, setForm] = useState({
+    state: "",
+    barNumber: "",
+  });
+  const [errors, setErrors] = useState({});
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  const statesList = mdmsData?.States ;
+  const validate = () => {
+    let err = {};
 
+    if (!form.state) err.state = "State required";
+    if (!form.barNumber) err.barNumber = "BAR number required";
+    if (!file) err.file = "Upload document required";
 
+    setErrors(err);
+    return Object.keys(err).length === 0;
+  };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!validate()) return;
+
+  //   const fileRes = await uploadDocument(file);
+
+  //   const payload = {
+  //     state: form.state,
+  //     barNumber: form.barNumber,
+  //     fileStoreId: fileRes.fileStoreId,
+  //   };
+
+  //   console.log("Verification Payload ", payload);
+
+  //   navigate("/registration");
+  // };
+  const mdms = useMDMS();
+const statesList = mdms?.States || [];
+
+const [loading, setLoading] = useState(false);
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  setLoading(true);
+
+  try {
+    const fileRes = await uploadDocument(file);
+
+    const payload = {
+      state: form.state,
+      barNumber: form.barNumber,
+      fileStoreId: fileRes.fileStoreId,
+    };
+
+    localStorage.setItem("verification", JSON.stringify(payload));
+
+    navigate("/registration");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -19,9 +85,9 @@ const AdvocateVerification = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/otp")} >‹ Back</button>
         <div style={styles.contentWidthLimiter}>
-          
+
 
           <div style={styles.verificationCard}>
             <h1 style={styles.title}>Advocate Verification</h1>
@@ -29,18 +95,25 @@ const AdvocateVerification = () => {
               To ensure the authenticity of your profile, please provide the following details for us to verify
             </p>
 
-            <form style={styles.form}>
+            <form style={styles.form} onSubmit={handleSubmit}>
               <div style={styles.inputGroup}>
                 <label style={styles.label}>State of registration</label>
-                <select style={styles.inputStyle}>
+                <select style={styles.inputStyle} name="state" onChange={handleChange}>
                   <option value="">Select State</option>
                   {statesList.map(s => <option key={s} value={s.code}>{s.name}</option>)}
                 </select>
               </div>
-
+              <div>{errors.state && <p style={{ color: 'red', fontSize: "12px" }}>{errors.state}</p>}</div>
               <div style={styles.inputGroup}>
                 <label style={styles.label}>BAR registration number</label>
-                <input type="text" placeholder="Enter registration number" style={styles.inputStyle} />
+                <input type="text" name="barNumber" placeholder="Enter registration number" style={styles.inputStyle} onChange={handleChange} />
+              </div>
+              <div>
+                {errors.barNumber && (
+                  <p style={{ color: "red", fontSize: "12px" }}>
+                    {errors.barNumber}
+                  </p>
+                )}
               </div>
 
               <div style={styles.inputGroup}>
@@ -54,7 +127,7 @@ const AdvocateVerification = () => {
                     <input type="file" hidden onChange={(e) => setFile(e.target.files[0])} />
                   </label>
                 </div>
-               
+
                 {file && (
                   <div style={styles.imagePreviewContainer}>
                     <img
@@ -73,8 +146,10 @@ const AdvocateVerification = () => {
                   </div>
                 )}
               </div>
+              <div>{errors.file && <p style={{ color: 'red', fontSize: "12px" }}>{errors.file}</p>}</div>
 
-              <button type="submit" style={styles.continueButton}>Continue</button>
+              <button type="submit" style={styles.continueButton}
+              >Continue</button>
             </form>
           </div>
         </div>
@@ -121,7 +196,7 @@ const styles = {
   },
   contentWidthLimiter: {
     width: '100%',
-    maxWidth: '540px', 
+    maxWidth: '540px',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -138,7 +213,7 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
     marginLeft: '40px',
-    color:'#000'
+    color: '#000'
   },
   verificationCard: {
     backgroundColor: 'var(--bg-card)',
@@ -191,7 +266,7 @@ const styles = {
     flex: 1,
     padding: '12px',
     border: '1px solid var(--border-input)',
-    backgroundColor: '#FBFBFB', 
+    backgroundColor: '#FBFBFB',
     color: '#9E9E9E',
     fontSize: '13px',
     fontStyle: 'italic',
@@ -229,33 +304,33 @@ const styles = {
 
   ///////////////////
   removeButton: {
-  position: 'absolute',
-  top: '4px',
-  right: '4px',
-  background: '#0B5C66',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '2px',
-  width: '20px',
-  height: '20px',
-  cursor: 'pointer',
-  fontSize: '12px',
-  lineHeight: '20px',
-  textAlign: 'center'
-},
-imagePreviewContainer: {
-  marginTop: '12px',
-  position: 'relative',
-  width: '120px',
-  border: '1px solid #ddd',
-  borderRadius: '2px',
-  overflow: 'hidden'
-},
+    position: 'absolute',
+    top: '4px',
+    right: '4px',
+    background: '#0B5C66',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '2px',
+    width: '20px',
+    height: '20px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    lineHeight: '20px',
+    textAlign: 'center'
+  },
+  imagePreviewContainer: {
+    marginTop: '12px',
+    position: 'relative',
+    width: '120px',
+    border: '1px solid #ddd',
+    borderRadius: '2px',
+    overflow: 'hidden'
+  },
 
-previewImage: {
-  width: '100%',
-  display: 'block'
-},
+  previewImage: {
+    width: '100%',
+    display: 'block'
+  },
 };
 
 export default AdvocateVerification;

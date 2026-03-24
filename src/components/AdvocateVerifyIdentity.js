@@ -1,5 +1,7 @@
 
 import React, { useState } from "react";
+import { verifyIdentity } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const AdvocateVerifyIdentity = () => {
   const [selectedMethod, setSelectedMethod] = useState("aadhaar");
@@ -17,6 +19,22 @@ const AdvocateVerifyIdentity = () => {
     },
   ];
 
+  const navigate = useNavigate();
+
+// const handleSubmit = async () => {
+//   await verifyIdentity(selectedMethod);
+
+//   navigate("/advocate-aadhar-verification");
+// };
+
+const handleSubmit = async () => {
+  await verifyIdentity(selectedMethod);
+
+  localStorage.setItem("identityMethod", selectedMethod);
+
+  navigate("/advocate-aadhar-verification");
+};
+
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -28,7 +46,7 @@ const AdvocateVerifyIdentity = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/advocate-address")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           
 
@@ -65,7 +83,7 @@ const AdvocateVerifyIdentity = () => {
           ))}
         </div>
 
-        <button type="button" style={styles.continueButton}>
+        <button type="button" style={styles.continueButton} onClick={handleSubmit}>
           Continue
         </button>
       </div>

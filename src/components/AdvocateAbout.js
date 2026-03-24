@@ -1,14 +1,15 @@
 
 import React, { useState } from 'react';
 import mdmsData from '../mock/mdmsData.json';
-
+import { useNavigate } from "react-router-dom";
 const AdvocateAbout = () => {
   const [file, setFile] = useState(null);
-
+  const navigate = useNavigate();
   const statesList = mdmsData?.States || ['Odisha', 'Delhi', 'Maharashtra'];
-  
+  const [error, setError] = useState("");
+
   const [role, setRole] = useState("advocate");
-    const roles = [
+  const roles = [
     {
       id: "litigant",
       title: "I’m a litigant",
@@ -37,43 +38,56 @@ const AdvocateAbout = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
-          
+
 
           <div style={styles.verificationCard}>
-                     <h1 style={styles.title}>Tell us a bit about yourself</h1>
-         <p style={styles.subtitle}>
-           This will help us streamline a few things and personalise your experience
-         </p>
+            <h1 style={styles.title}>Tell us a bit about yourself</h1>
+            <p style={styles.subtitle}>
+              This will help us streamline a few things and personalise your experience
+            </p>
 
-            
+
             <div style={styles.roleList}>
-           {roles.map((item) => (
-            <div
-              key={item.id}
-              style={styles.roleOption}
-              onClick={() => setRole(item.id)}
-            >
-              <div style={styles.radioContainer}>
-                <div style={{
-                  ...styles.radioOuter,
-                  borderColor: role === item.id ? "#a34e25" : "#ccc" 
-                }}>
-                  {role === item.id && <div style={styles.radioInner} />}
+              {roles.map((item) => (
+                <div
+                  key={item.id}
+                  style={styles.roleOption}
+                  onClick={() => setRole(item.id)}
+                >
+                  <div style={styles.radioContainer}>
+                    <div style={{
+                      ...styles.radioOuter,
+                      borderColor: role === item.id ? "#a34e25" : "#ccc"
+                    }}>
+                      {role === item.id && <div style={styles.radioInner} />}
+                    </div>
+                  </div>
+                  <div style={styles.textContainer}>
+                    <div style={styles.roleTitle}>{item.title}</div>
+                    <div style={styles.roleDescription}>{item.description}</div>
+                  </div>
                 </div>
-              </div>
-              <div style={styles.textContainer}>
-                <div style={styles.roleTitle}>{item.title}</div>
-                <div style={styles.roleDescription}>{item.description}</div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <button type="button" style={styles.continueButton}>
-          Continue
-        </button>
+            <div>
+              {error && <p style={{ color: "red" }}>{error}</p>}
+            </div>
+            <button
+              type="button"
+              style={styles.continueButton}
+              onClick={() => {
+                if (!role) {
+                  setError("Please select a role");
+                  return;
+                }
+                navigate("/mobile");
+              }}
+            >
+              Continue
+            </button>
           </div>
         </div>
       </main>
@@ -119,7 +133,7 @@ const styles = {
   },
   contentWidthLimiter: {
     width: '100%',
-    maxWidth: '540px', 
+    maxWidth: '540px',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -136,7 +150,7 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
     marginLeft: '40px',
-    color:'#000'
+    color: '#000'
   },
   verificationCard: {
     backgroundColor: 'var(--bg-card)',
@@ -189,7 +203,7 @@ const styles = {
     flex: 1,
     padding: '12px',
     border: '1px solid var(--border-input)',
-    backgroundColor: '#FBFBFB', 
+    backgroundColor: '#FBFBFB',
     color: '#9E9E9E',
     fontSize: '13px',
     fontStyle: 'italic',
@@ -226,7 +240,7 @@ const styles = {
   },
 
   ////////
-    card: {
+  card: {
     width: "480px",
     background: "#fff",
     padding: "50px 24px",
@@ -275,7 +289,7 @@ const styles = {
     width: "10px",
     height: "10px",
     borderRadius: "50%",
-    backgroundColor: "#a34e25", 
+    backgroundColor: "#a34e25",
   },
   textContainer: {
     flex: 1,
@@ -294,7 +308,7 @@ const styles = {
   continueButton: {
     width: "100%",
     padding: "14px",
-    background: "#007a7a", 
+    background: "#007a7a",
     color: "#fff",
     border: "none",
     borderRadius: "4px",

@@ -1,9 +1,36 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { sendOTP } from "../services/api";
 
 const AdvocateSignIn = () => {
   const [role, setRole] = useState("advocate");
   const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+  let err = {};
+
+  if (!phone) {
+    err.phone = "Phone number is required";
+  } else if (!/^[6-9]\d{9}$/.test(phone)) {
+    err.phone = "Enter valid 10-digit mobile number";
+  }
+
+  setErrors(err);
+  return Object.keys(err).length === 0;
+};
+
+   const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    
+  e.preventDefault();
+   if (!validate()) return;
+    // await sendOTP(phone);
+
+  navigate("/about");
+};
 
   return (
     <div style={styles.container}>
@@ -35,7 +62,7 @@ const AdvocateSignIn = () => {
           </button>
         </div>
 
-        <form style={styles.form}>
+        <form style={styles.form} onSubmit={handleSubmit}>
           <label style={styles.label}>Phone No</label>
 
           <div style={styles.phoneInput}>
@@ -47,8 +74,15 @@ const AdvocateSignIn = () => {
               onChange={(e) => setPhone(e.target.value)}
               style={styles.input}
             />
+            
           </div>
-
+          <div>
+            {errors.phone && (
+              <p style={{ color: "red", fontSize: "12px" }}>
+                {errors.phone}
+              </p>
+            )}
+          </div>
           <button type="submit" style={styles.signInButton}>
             Sign In
           </button>

@@ -1,28 +1,119 @@
 # DIGIT Assignment - Advocate Registration Frontend
 
-## Technology
-React JS
+## Overview
+This project implements the Advocate Registration module frontend as part of the DIGIT platform assignment.
+
+The application follows the DIGIT UI guidelines and simulates integration with backend services such as IDGen, MDMS, Workflow, and Persister using mock APIs.
+
+* **MDMS Integration:** All master data (States, Districts, Cities) is fetched from a central mock MDMS service. No hardcoding of master data names; only codes are passed in API payloads.
+* **Workflow Driven:** The UI logic is built to align with the `advocate-registration` workflow states (`PENDING_FOR_VERIFICATION`, `APPROVED`, etc.).
+* **Dummy External Integrations:** Aadhaar verification screens include a simulated 2-second loading state to mimic external API calls as per requirements.
+* **Data Persistence:** Uses `localStorage` to maintain state across the 12-page registration journey.
+* **DIGIT API Contract:** The final submission payload is structured using the standard `Advocates` and `RequestInfo` objects.
+
+---
+
+## Tech Stack
+- React JS
+- JavaScript
+- CSS
+
+---
 
 ## Features Implemented
-- Advocate Registration Form
-- Aadhar Verification (Dummy)
+
+- Multi-step form navigation
+- Form validation at each step
+- Aadhaar Verification (Dummy UI) 
 - Document Upload
 - Terms & Conditions
-- Registration Success Page
+- Success Page with Application Number
 
-## API Integration
-Mock APIs implemented for:
-- Create Advocate
+---
+
+## Mock API Integration
+
+Mock services are implemented to simulate backend:
+
+- Create Advocate Application
+- Fetch Master Data (MDMS)
 - Upload Documents
-- Fetch Master Data
 
-## Master Data
-Mock MDMS data used for dropdown fields.
+Example response:
+```js
+{
+  applicationNumber: "ADV-2026-0001",
+  status: "PENDING"
+}
+
+
+**Module Name:** `digit_assignment`  
+**Base Package:** `digit.academy.tutorial`
+
+---
+
+
+## Screenshots & Flow
+
+### 1. Sign In
+![Step 1 - Sign In](./screenshots/page1_signIn.png)
+*User enters mobile number for signIn.*
+
+### 2. About
+![Step 1 - About](./screenshots/page2_about.png)
+*User choose about his details.*
+
+### 3. Mobile Verification
+![Step 1 - Mobile Verification](./screenshots/page3_mobile.png)
+*User enters mobile number for verification.*
+
+### 4. Mobile & OTP Verification
+![Step 1 - OTP](./screenshots/page4_otp.png)
+*User enters mobile number and verifies via a 6-digit OTP.*  //Valid OTP 123456
+
+### 5. Details Verification
+![Step 1 - Verification](./screenshots/page5_uploadVerification.png)
+*User enters State and image upload.*
+
+### 6.Registration Details
+![Step 1 - Registration Details](./screenshots/page6_registration.png)
+*User enters Registration Details.*
+
+### 7. Professional & Address Details (MDMS)
+![Step 2 - Address](./screenshots/page7_address.png)
+*Address selection uses cascading dropdowns driven by MDMS codes.*
+
+### 8. Identity Verification
+![Step 1 - Verification](./screenshots/page8_identity.png)
+*User enters Identity .*
+
+### 9. Dummy Aadhaar Integration
+![Step 3 - Aadhaar](./screenshots/page9_aadharNumber.png)
+*Simulated loading state (2s) for external Aadhaar verification.*
+
+### 10. Aadhar & OTP Verification
+![Step 1 - Aadhar & OTP](./screenshots/page10_aadharOTP.png)
+*User verifies via a 6-digit OTP.*    //Valid OTP 123456
+
+### 11. Term & Condition 
+![Step 4 - Term](./screenshots/page11_term.png)
+*User accept term and condition.*
+
+### 12. Waiting
+![Step 4 - Waiting](./screenshots/page12_waiting.png)
+*User waiting page*
+
+### 13. Success State &  Proof: Final API Payload
+![Step 5 - Success](./screenshots/page13_success.png)
+*Generated Application ID following the format: `ADV/YYYY/XXXX` and Screenshot of the Browser Console showing the formatted DIGIT JSON payload upon final submission.*
+
+---
+
 
 ## Run Project
+
 npm install
 npm start
-
 
 
 

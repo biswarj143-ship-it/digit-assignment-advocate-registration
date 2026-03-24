@@ -1,7 +1,8 @@
 import React from 'react';
-
+import { useNavigate } from "react-router-dom";
 const AdvocateSuccess = () => {
-
+const navigate = useNavigate();
+const appId = localStorage.getItem("applicationId");
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -13,7 +14,7 @@ const AdvocateSuccess = () => {
       </header>
 
       <main style={styles.mainContent}>
-        <button style={styles.backButton}>‹ Back</button>
+        <button style={styles.backButton} onClick={() => navigate("/advocate-waiting")}>‹ Back</button>
         <div style={styles.contentWidthLimiter}>
           
 
@@ -39,7 +40,7 @@ const AdvocateSuccess = () => {
         
         <h1 style={styles.title}>You’ve been registered successfully!</h1>
         <p style={styles.subtitle}>You can now proceed to file a case or join an on-going case</p>
-        
+        <p>Application ID: {appId}</p>
         <div style={styles.buttonGroup}>
           <button style={styles.primaryButton}>File a Case</button>
           <button style={styles.secondaryButton}>Join a Case</button>
