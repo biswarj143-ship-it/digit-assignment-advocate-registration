@@ -5,7 +5,7 @@ export const createAdvocate = async (data) => {
     RequestInfo: {
       apiId: "Rainmaker",
       msgId: "1669914902132|en_IN",
-      authToken: localStorage.getItem("employee-token") || "8923-3213-3213", // dummy token
+      authToken: localStorage.getItem("employee-token") || "8923-3213-3213", 
     },
     Advocates: [
       {
